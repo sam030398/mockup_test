@@ -22,18 +22,20 @@ export function MapPage() {
   );
 
   const statewideTrend = useMemo<EmissionRecord[]>(() => {
-    const totalsByYear = records.reduce<Record<number, number>>((acc, record) => {
-      acc[record.year] = (acc[record.year] ?? 0) + record.total;
+    const totalsByYearAndType = records.reduce<Record<string, number>>((acc, record) => {
+      const key = `${record.year}-${record.type}`;
+      acc[key] = (acc[key] ?? 0) + record.total;
       return acc;
     }, {});
 
-    return Object.entries(totalsByYear)
-      .map(([year, total]) => {
-        const numericYear = Number(year);
+    return Object.entries(totalsByYearAndType)
+      .map(([compositeKey, total]) => {
+        const [yearValue, typeValue] = compositeKey.split("-");
+        const numericYear = Number(yearValue);
         return {
           regionId: "statewide",
           year: numericYear,
-          type: numericYear <= 2025 ? ("actual" as const) : ("forecast" as const),
+          type: typeValue === "actual" ? ("actual" as const) : ("forecast" as const),
           transport: 0,
           buildings: 0,
           power: 0,
@@ -45,7 +47,7 @@ export function MapPage() {
           updatedBy: "aggregate",
         };
       })
-      .sort((a, b) => a.year - b.year);
+      .sort((a, b) => (a.year === b.year ? a.type.localeCompare(b.type) : a.year - b.year));
   }, [records]);
 
   return (

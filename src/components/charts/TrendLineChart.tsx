@@ -16,9 +16,21 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 const formatMillionTco2e = (value: number): string => `${(value / 1_000_000).toFixed(1)} Million tCO2e`;
 
 export function TrendLineChart({ records }: { records: EmissionRecord[] }) {
-  const labels = records.map((record) => String(record.year));
-  const actualSeries = records.map((record) => (record.type === "actual" ? record.total : null));
-  const forecastSeries = records.map((record) => (record.type === "forecast" ? record.total : null));
+  const years = Array.from(new Set(records.map((record) => record.year))).sort((a, b) => a - b);
+  const actualByYear = new Map<number, number>();
+  const forecastByYear = new Map<number, number>();
+
+  records.forEach((record) => {
+    if (record.type === "actual") {
+      actualByYear.set(record.year, record.total);
+      return;
+    }
+    forecastByYear.set(record.year, record.total);
+  });
+
+  const labels = years.map((year) => String(year));
+  const actualSeries = years.map((year) => actualByYear.get(year) ?? null);
+  const forecastSeries = years.map((year) => forecastByYear.get(year) ?? null);
 
   const data = {
     labels,

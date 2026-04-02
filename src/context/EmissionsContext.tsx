@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState } from "react";
-import { ACTUAL_TO_YEAR, END_RANGE, START_RANGE, generateSeedEmissions } from "../mock/emissions";
+import { END_RANGE, START_RANGE, generateSeedEmissions } from "../mock/emissions";
 import type { EmissionInput, EmissionRecord } from "../types";
 
 type EmissionsContextType = {
@@ -7,7 +7,13 @@ type EmissionsContextType = {
   years: number[];
   getRecord: (regionId: string, year: number) => EmissionRecord | undefined;
   getRegionRecords: (regionId: string) => EmissionRecord[];
-  upsertRecord: (regionId: string, year: number, values: EmissionInput, updatedBy: string) => void;
+  upsertRecord: (
+    regionId: string,
+    year: number,
+    values: EmissionInput,
+    updatedBy: string,
+    type?: EmissionRecord["type"],
+  ) => void;
 };
 
 const STORAGE_KEY = "ny-ghg-emissions";
@@ -59,14 +65,25 @@ export function EmissionsProvider({ children }: { children: React.ReactNode }) {
     return list;
   }, []);
 
-  const getRecord = (regionId: string, year: number) =>
-    records.find((record) => record.regionId === regionId && record.year === year);
+  const getRecord = (regionId: string, year: number) => {
+    const matching = records.filter((record) => record.regionId === regionId && record.year === year);
+    const actual = matching.find((record) => record.type === "actual");
+    if (actual) {
+      return actual;
+    }
+    return matching.find((record) => record.type === "forecast");
+  };
 
   const getRegionRecords = (regionId: string) =>
     records.filter((record) => record.regionId === regionId).sort((a, b) => a.year - b.year);
 
-  const upsertRecord = (regionId: string, year: number, values: EmissionInput, updatedBy: string) => {
-    const type = year <= ACTUAL_TO_YEAR ? "actual" : "forecast";
+  const upsertRecord = (
+    regionId: string,
+    year: number,
+    values: EmissionInput,
+    updatedBy: string,
+    type: EmissionRecord["type"] = "actual",
+  ) => {
     const nextRecord: EmissionRecord = {
       regionId,
       year,
@@ -83,10 +100,12 @@ export function EmissionsProvider({ children }: { children: React.ReactNode }) {
     };
 
     setRecords((current) => {
-      const exists = current.some((record) => record.regionId === regionId && record.year === year);
+      const exists = current.some(
+        (record) => record.regionId === regionId && record.year === year && record.type === type,
+      );
       const updated = exists
         ? current.map((record) =>
-            record.regionId === regionId && record.year === year ? nextRecord : record,
+            record.regionId === regionId && record.year === year && record.type === type ? nextRecord : record,
           )
         : [...current, nextRecord];
 
