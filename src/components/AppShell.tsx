@@ -12,14 +12,14 @@ export function AppShell() {
   const { user, logout } = useAuth();
   const isSuperAdmin = user?.role === "super_admin";
   const assignedRegionLabel = isSuperAdmin
-    ? "All NY Councils"
+    ? "All Selangor Councils"
     : user?.assignedRegionIds.map((regionId) => REGION_NAME_BY_ID[regionId] ?? regionId).join(", ");
 
   return (
     <div className="app-shell">
       <header className="topbar">
         <div>
-          <h1>NY State GHG Emissions Dashboard</h1>
+          <h1>Selangor GHG Emissions Dashboard</h1>
           <div className="auth-meta">
             <p className="muted">Signed in as {user?.name}</p>
             <span className={isSuperAdmin ? "role-badge is-superadmin" : "role-badge is-dataowner"}>

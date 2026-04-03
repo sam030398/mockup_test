@@ -28,7 +28,7 @@ const resolveUserAccess = (name: string, email: string) => {
     return {
       displayName: "Ajith",
       role: "data_owner" as const,
-      assignedRegionIds: ["long_island"],
+      assignedRegionIds: ["petaling_jaya"],
     };
   }
 
@@ -38,7 +38,7 @@ const resolveUserAccess = (name: string, email: string) => {
 export function LoginPage() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("vijay@ny.gov");
+  const [email, setEmail] = useState("vijay@selangor.gov.my");
   const [name, setName] = useState("Vijay");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -72,7 +72,7 @@ export function LoginPage() {
         <h2>State Emissions Portal</h2>
         <p className="muted">Mock secure sign-in for role-based access</p>
         <p className="muted">
-          Allowed users: <strong>Vijay</strong> (Super Admin) and <strong>Ajith</strong> (Long Island Data Owner).
+          Allowed users: <strong>Vijay</strong> (Super Admin) and <strong>Ajith</strong> (Petaling Jaya Data Owner).
         </p>
         <p className="muted">
           Resolved Access:{" "}
@@ -83,7 +83,7 @@ export function LoginPage() {
           <strong>
             {resolvedAccess
               ? resolvedAccess.role === "super_admin"
-                ? "All NY Councils"
+                ? "All Selangor Councils"
                 : REGION_NAME_BY_ID[resolvedAccess.assignedRegionIds[0]]
               : "Not assigned"}
           </strong>

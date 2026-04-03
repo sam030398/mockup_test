@@ -1,69 +1,184 @@
 import type { Region } from "../types";
 
-export const NY_REDC_REGIONS: Region[] = [
-  {
-    id: "capital",
-    name: "Capital Region",
-    countyFips: ["36001", "36021", "36039", "36083", "36091", "36093", "36113", "36115"],
-  },
-  {
-    id: "central_ny",
-    name: "Central New York",
-    countyFips: ["36011", "36023", "36053", "36067", "36075"],
-  },
-  {
-    id: "finger_lakes",
-    name: "Finger Lakes",
-    countyFips: ["36037", "36051", "36055", "36069", "36073", "36099", "36117", "36121", "36123"],
-  },
-  {
-    id: "long_island",
-    name: "Long Island",
-    countyFips: ["36059", "36103"],
-  },
-  {
-    id: "mid_hudson",
-    name: "Mid-Hudson",
-    countyFips: ["36027", "36071", "36079", "36087", "36105", "36111", "36119"],
-  },
-  {
-    id: "mohawk_valley",
-    name: "Mohawk Valley",
-    countyFips: ["36035", "36043", "36057", "36065", "36077", "36095"],
-  },
-  {
-    id: "new_york_city",
-    name: "New York City",
-    countyFips: ["36005", "36047", "36061", "36081", "36085"],
-  },
-  {
-    id: "north_country",
-    name: "North Country",
-    countyFips: ["36019", "36031", "36033", "36041", "36045", "36049", "36089"],
-  },
-  {
-    id: "southern_tier",
-    name: "Southern Tier",
-    countyFips: ["36007", "36015", "36017", "36025", "36097", "36101", "36107", "36109"],
-  },
-  {
-    id: "western_ny",
-    name: "Western New York",
-    countyFips: ["36003", "36009", "36013", "36029", "36063"],
-  },
+export const SELANGOR_OUTLINE: [number, number][] = [
+  [3.9, 100.9],
+  [3.92, 101.25],
+  [3.85, 101.55],
+  [3.78, 101.86],
+  [3.45, 101.9],
+  [3.12, 101.9],
+  [2.72, 101.84],
+  [2.68, 101.5],
+  [2.7, 101.2],
+  [2.85, 100.95],
+  [3.2, 100.88],
+  [3.55, 100.9],
+  [3.9, 100.9],
 ];
 
-export const REGION_BY_FIPS: Record<string, Region> = NY_REDC_REGIONS.reduce<Record<string, Region>>(
-  (acc, region) => {
-    region.countyFips.forEach((fips) => {
-      acc[fips] = region;
-    });
-    return acc;
+export const NY_REDC_REGIONS: Region[] = [
+  {
+    id: "petaling_jaya",
+    name: "Petaling Jaya",
+    countyFips: [],
+    polygon: [
+      [3.05, 101.2],
+      [3.25, 101.2],
+      [3.25, 101.45],
+      [3.05, 101.45],
+    ],
+    labelPosition: [3.15, 101.325],
   },
-  {},
-);
+  {
+    id: "shah_alam",
+    name: "Shah Alam",
+    countyFips: [],
+    polygon: [
+      [3.25, 101.2],
+      [3.5, 101.2],
+      [3.5, 101.45],
+      [3.25, 101.45],
+    ],
+    labelPosition: [3.37, 101.325],
+  },
+  {
+    id: "subang_jaya",
+    name: "Subang Jaya",
+    countyFips: [],
+    polygon: [
+      [3.05, 101.45],
+      [3.25, 101.45],
+      [3.25, 101.65],
+      [3.05, 101.65],
+    ],
+    labelPosition: [3.15, 101.55],
+  },
+  {
+    id: "klang",
+    name: "Klang",
+    countyFips: [],
+    polygon: [
+      [2.9, 100.95],
+      [3.25, 100.95],
+      [3.25, 101.2],
+      [2.9, 101.2],
+    ],
+    labelPosition: [3.08, 101.08],
+  },
+  {
+    id: "ampang_jaya",
+    name: "Ampang Jaya",
+    countyFips: [],
+    polygon: [
+      [3.25, 101.65],
+      [3.5, 101.65],
+      [3.5, 101.85],
+      [3.25, 101.85],
+    ],
+    labelPosition: [3.37, 101.75],
+  },
+  {
+    id: "kajang",
+    name: "Kajang",
+    countyFips: [],
+    polygon: [
+      [3.05, 101.65],
+      [3.25, 101.65],
+      [3.25, 101.85],
+      [3.05, 101.85],
+    ],
+    labelPosition: [3.15, 101.75],
+  },
+  {
+    id: "sepang",
+    name: "Sepang",
+    countyFips: [],
+    polygon: [
+      [2.72, 101.2],
+      [3.05, 101.2],
+      [3.05, 101.65],
+      [2.72, 101.65],
+    ],
+    labelPosition: [2.88, 101.425],
+  },
+  {
+    id: "selayang",
+    name: "Selayang",
+    countyFips: [],
+    polygon: [
+      [3.25, 101.45],
+      [3.5, 101.45],
+      [3.5, 101.65],
+      [3.25, 101.65],
+    ],
+    labelPosition: [3.37, 101.55],
+  },
+  {
+    id: "kuala_selangor",
+    name: "Kuala Selangor",
+    countyFips: [],
+    polygon: [
+      [3.25, 100.95],
+      [3.5, 100.95],
+      [3.5, 101.2],
+      [3.25, 101.2],
+    ],
+    labelPosition: [3.37, 101.08],
+  },
+  {
+    id: "hulu_selangor",
+    name: "Hulu Selangor",
+    countyFips: [],
+    polygon: [
+      [3.5, 101.2],
+      [3.9, 101.2],
+      [3.9, 101.85],
+      [3.5, 101.85],
+    ],
+    labelPosition: [3.7, 101.52],
+  },
+  {
+    id: "kuala_langat",
+    name: "Kuala Langat",
+    countyFips: [],
+    polygon: [
+      [2.72, 100.95],
+      [2.9, 100.95],
+      [2.9, 101.2],
+      [2.72, 101.2],
+    ],
+    labelPosition: [2.81, 101.08],
+  },
+  {
+    id: "sabak_bernam",
+    name: "Sabak Bernam",
+    countyFips: [],
+    polygon: [
+      [3.5, 100.95],
+      [3.9, 100.95],
+      [3.9, 101.2],
+      [3.5, 101.2],
+    ],
+    labelPosition: [3.7, 101.08],
+  },
+];
 
 export const REGION_NAME_BY_ID = NY_REDC_REGIONS.reduce<Record<string, string>>((acc, region) => {
   acc[region.id] = region.name;
   return acc;
 }, {});
+
+export const REGION_ID_BY_PBT_NAME: Record<string, string> = {
+  "shah alam": "shah_alam",
+  "petaling jaya": "petaling_jaya",
+  "subang jaya": "subang_jaya",
+  "ampang jaya": "ampang_jaya",
+  kajang: "kajang",
+  klang: "klang",
+  sepang: "sepang",
+  selayang: "selayang",
+  "kuala selangor": "kuala_selangor",
+  "hulu selangor": "hulu_selangor",
+  "kuala langat": "kuala_langat",
+  "sabak bernam": "sabak_bernam",
+};

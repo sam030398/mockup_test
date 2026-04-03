@@ -1,19 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
-import L from "leaflet";
-import { GeoJSON, MapContainer, Marker, TileLayer } from "react-leaflet";
+import { useEffect, useState } from "react";
+import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import type { Feature, FeatureCollection, GeoJsonObject, Geometry } from "geojson";
-import { REGION_BY_FIPS } from "../mock/regions";
-
-const NY_COUNTY_GEOJSON_URL = "https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json";
-
-type CountyProperties = {
-  STATE?: string;
-  COUNTY?: string;
-  NAME?: string;
-  GEO_ID?: string;
-};
+import { REGION_ID_BY_PBT_NAME } from "../mock/regions";
 
 const COLORS = ["#0f4c81", "#3c6e8f", "#6f8f9f", "#8da9b9", "#537f95", "#35657e"];
+const SELANGOR_PBT_GEOJSON_URL =
+  "https://raw.githubusercontent.com/TindakMalaysia/Selangor-Maps/master/Selangor_PBT_2015/Selangor_PBT_2015.geojson";
+
+type SelangorPbtProperties = {
+  name?: string;
+  statename?: string;
+  subname?: string | null;
+  id?: string;
+};
 
 const styleForRegion = (regionId: string | undefined) => {
   if (!regionId) {
@@ -29,99 +28,43 @@ type NyRegionalMapProps = {
 };
 
 export function NyRegionalMap({ onRegionSelect }: NyRegionalMapProps) {
-  const [nyGeoJson, setNyGeoJson] = useState<FeatureCollection<Geometry, CountyProperties> | null>(null);
+  const [selangorGeoJson, setSelangorGeoJson] = useState<FeatureCollection<Geometry, SelangorPbtProperties> | null>(
+    null,
+  );
 
   useEffect(() => {
     const loadGeo = async () => {
-      const response = await fetch(NY_COUNTY_GEOJSON_URL);
-      const full = (await response.json()) as FeatureCollection<Geometry, CountyProperties>;
-      const filteredFeatures = full.features.filter(
-        (feature) => (feature.properties?.STATE ?? feature.id?.toString().slice(0, 2)) === "36",
-      );
-
-      setNyGeoJson({
+      const response = await fetch(SELANGOR_PBT_GEOJSON_URL);
+      const data = (await response.json()) as FeatureCollection<Geometry, SelangorPbtProperties>;
+      const filtered = data.features.filter((feature) => feature.properties?.statename === "Selangor");
+      setSelangorGeoJson({
         type: "FeatureCollection",
-        features: filteredFeatures,
+        features: filtered,
       });
     };
 
-    loadGeo().catch(() => setNyGeoJson(null));
+    loadGeo().catch(() => setSelangorGeoJson(null));
   }, []);
 
-  const mapCenter = useMemo<[number, number]>(() => [42.9, -75.2], []);
-  const nyBounds = useMemo<[number, number][]>(() => [
-    [40.3, -79.9],
-    [45.2, -71.5],
-  ], []);
+  const mapCenter: [number, number] = [3.2, 101.45];
+  const selangorBounds: [number, number][] = [
+    [2.65, 100.85],
+    [3.95, 101.92],
+  ];
 
-  const regionLabelPoints = useMemo(() => {
-    if (!nyGeoJson) {
-      return [] as { regionId: string; regionName: string; lat: number; lng: number }[];
-    }
-
-    const pointsByRegion = new Map<string, { regionName: string; points: [number, number][] }>();
-
-    const walkCoords = (coords: unknown, bucket: [number, number][]) => {
-      if (!Array.isArray(coords)) {
-        return;
-      }
-      if (typeof coords[0] === "number" && typeof coords[1] === "number") {
-        bucket.push([coords[1], coords[0]]);
-        return;
-      }
-      coords.forEach((child) => walkCoords(child, bucket));
-    };
-
-    const collectCoords = (geometry: Geometry | undefined, bucket: [number, number][]) => {
-      if (!geometry) {
-        return;
-      }
-      if (geometry.type === "GeometryCollection") {
-        geometry.geometries.forEach((child) => collectCoords(child, bucket));
-        return;
-      }
-      walkCoords(geometry.coordinates, bucket);
-    };
-
-    nyGeoJson.features.forEach((feature) => {
-      const props = feature.properties;
-      const fips = `36${props?.COUNTY ?? ""}`;
-      const region = REGION_BY_FIPS[fips];
-      if (!region) {
-        return;
-      }
-
-      const bucket: [number, number][] = [];
-      collectCoords(feature.geometry, bucket);
-      if (!bucket.length) {
-        return;
-      }
-
-      const existing = pointsByRegion.get(region.id) ?? { regionName: region.name, points: [] };
-      existing.points.push(...bucket);
-      pointsByRegion.set(region.id, existing);
-    });
-
-    return Array.from(pointsByRegion.entries()).map(([regionId, details]) => {
-      const lat = details.points.reduce((sum, point) => sum + point[0], 0) / details.points.length;
-      const lng = details.points.reduce((sum, point) => sum + point[1], 0) / details.points.length;
-      return { regionId, regionName: details.regionName, lat, lng };
-    });
-  }, [nyGeoJson]);
-
-  if (!nyGeoJson) {
-    return <p className="empty-message">Loading New York county boundaries...</p>;
+  if (!selangorGeoJson) {
+    return <p className="empty-message">Loading Selangor council boundaries...</p>;
   }
 
   return (
     <MapContainer
       center={mapCenter}
-      zoom={6}
+      zoom={9}
       className="map"
-      maxBounds={nyBounds}
+      maxBounds={selangorBounds}
       maxBoundsViscosity={1}
-      minZoom={6}
-      maxZoom={8}
+      minZoom={8}
+      maxZoom={11}
       scrollWheelZoom
     >
       <TileLayer
@@ -130,38 +73,44 @@ export function NyRegionalMap({ onRegionSelect }: NyRegionalMapProps) {
         noWrap
       />
       <GeoJSON
-        data={nyGeoJson as GeoJsonObject}
-        style={(feature) => {
-          const props = feature?.properties as CountyProperties;
-          const fips = `36${props.COUNTY ?? ""}`;
-          const region = REGION_BY_FIPS[fips];
-          return styleForRegion(region?.id);
+        data={selangorGeoJson as GeoJsonObject}
+        style={{
+          fillColor: "#bfdbfe",
+          fillOpacity: 0.4,
+          color: "#1d4ed8",
+          weight: 2,
         }}
-        onEachFeature={(feature: Feature<Geometry, CountyProperties>, layer) => {
+      />
+      <GeoJSON
+        data={selangorGeoJson as GeoJsonObject}
+        style={(feature) => {
+          const props = feature?.properties as SelangorPbtProperties;
+          const regionName = (props?.name ?? "").toLowerCase();
+          const regionId = REGION_ID_BY_PBT_NAME[regionName];
+          return {
+            ...styleForRegion(regionId),
+            fillOpacity: 0.35,
+            weight: 1.8,
+          };
+        }}
+        onEachFeature={(feature: Feature<Geometry, SelangorPbtProperties>, layer) => {
           const props = feature.properties;
-          const fips = `36${props?.COUNTY ?? ""}`;
-          const region = REGION_BY_FIPS[fips];
-          const tooltip = `${props?.NAME ?? "County"} - ${region?.name ?? "Unmapped Region"}`;
-          layer.bindTooltip(tooltip);
+          const regionName = props?.name ?? "Council";
+          const regionId = REGION_ID_BY_PBT_NAME[regionName.toLowerCase()];
+
+          layer.bindTooltip(regionName, {
+            permanent: true,
+            direction: "center",
+            className: "region-label-inline",
+          });
 
           layer.on("click", () => {
-            if (region) {
-              onRegionSelect(region.id);
+            if (regionId) {
+              onRegionSelect(regionId);
             }
           });
         }}
       />
-      {regionLabelPoints.map((point) => (
-        <Marker
-          key={point.regionId}
-          position={[point.lat, point.lng]}
-          icon={L.divIcon({
-            className: "region-label",
-            html: `<span>${point.regionName}</span>`,
-          })}
-          interactive={false}
-        />
-      ))}
     </MapContainer>
   );
 }

@@ -13,6 +13,8 @@ export type Region = {
   id: string;
   name: string;
   countyFips: string[];
+  polygon?: [number, number][];
+  labelPosition?: [number, number];
 };
 
 export type EmissionType = "actual" | "forecast";
