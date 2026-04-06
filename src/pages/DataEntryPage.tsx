@@ -37,6 +37,8 @@ export function DataEntryPage() {
             waste: existing?.waste ?? 0,
             industry: existing?.industry ?? 0,
             agriculture: existing?.agriculture ?? 0,
+            gdp: existing?.gdp ?? 0,
+            population: existing?.population ?? 0,
           },
         };
       }),
@@ -52,6 +54,8 @@ export function DataEntryPage() {
         waste: getRecord(selectedRegion, year)?.waste ?? 0,
         industry: getRecord(selectedRegion, year)?.industry ?? 0,
         agriculture: getRecord(selectedRegion, year)?.agriculture ?? 0,
+        gdp: getRecord(selectedRegion, year)?.gdp ?? 0,
+        population: getRecord(selectedRegion, year)?.population ?? 0,
       };
       return {
         ...current,
@@ -104,6 +108,8 @@ export function DataEntryPage() {
               {SECTORS.map((sector) => (
                 <th key={sector.key}>{sector.label}</th>
               ))}
+              <th>GDP</th>
+              <th>Population</th>
               <th>Total</th>
               <th>Action</th>
             </tr>
@@ -124,6 +130,22 @@ export function DataEntryPage() {
                       />
                     </td>
                   ))}
+                  <td>
+                    <input
+                      type="number"
+                      min={0}
+                      value={row.values.gdp}
+                      onChange={(e) => updateField(row.year, "gdp", e.target.value)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      min={0}
+                      value={row.values.population}
+                      onChange={(e) => updateField(row.year, "population", e.target.value)}
+                    />
+                  </td>
                   <td>{total.toLocaleString()}</td>
                   <td>
                     <button type="button" className="button secondary" onClick={() => saveYear(row.year)}>

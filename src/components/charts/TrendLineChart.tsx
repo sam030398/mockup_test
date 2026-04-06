@@ -14,18 +14,45 @@ import type { EmissionRecord } from "../../types";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 const formatMillionTco2e = (value: number): string => `${(value / 1_000_000).toFixed(1)} Million tCO2e`;
+const formatPerGdp = (value: number): string => value.toFixed(4);
+const formatPerPopulation = (value: number): string => value.toFixed(4);
 
-export function TrendLineChart({ records }: { records: EmissionRecord[] }) {
+type TrendMetric = "total" | "emission_per_gdp" | "emission_per_population";
+
+const metricLabelMap: Record<TrendMetric, string> = {
+  total: "Million tCO2e",
+  emission_per_gdp: "Emission per GDP",
+  emission_per_population: "Emission per Population",
+};
+
+const metricFormatterMap: Record<TrendMetric, (value: number) => string> = {
+  total: formatMillionTco2e,
+  emission_per_gdp: formatPerGdp,
+  emission_per_population: formatPerPopulation,
+};
+
+const valueForMetric = (record: EmissionRecord, metric: TrendMetric): number => {
+  if (metric === "emission_per_gdp") {
+    return record.gdp > 0 ? record.total / record.gdp : 0;
+  }
+  if (metric === "emission_per_population") {
+    return record.population > 0 ? record.total / record.population : 0;
+  }
+  return record.total;
+};
+
+export function TrendLineChart({ records, metric = "total" }: { records: EmissionRecord[]; metric?: TrendMetric }) {
   const years = Array.from(new Set(records.map((record) => record.year))).sort((a, b) => a - b);
-  const actualByYear = new Map<number, number>();
-  const forecastByYear = new Map<number, number>();
+  const actualByYear = new Map<number, number | null>();
+  const forecastByYear = new Map<number, number | null>();
 
   records.forEach((record) => {
+    const value = valueForMetric(record, metric);
     if (record.type === "actual") {
-      actualByYear.set(record.year, record.total);
+      actualByYear.set(record.year, value);
       return;
     }
-    forecastByYear.set(record.year, record.total);
+    forecastByYear.set(record.year, value);
   });
 
   const labels = years.map((year) => String(year));
@@ -66,7 +93,7 @@ export function TrendLineChart({ records }: { records: EmissionRecord[] }) {
         callbacks: {
           label: (context: TooltipItem<"line">) => {
             const yValue = context.parsed.y ?? 0;
-            return `${context.dataset.label ?? "Value"}: ${formatMillionTco2e(yValue)}`;
+            return `${context.dataset.label ?? "Value"}: ${metricFormatterMap[metric](yValue)}`;
           },
         },
       },
@@ -74,7 +101,11 @@ export function TrendLineChart({ records }: { records: EmissionRecord[] }) {
     scales: {
       y: {
         ticks: {
-          callback: (value: string | number) => formatMillionTco2e(Number(value)),
+          callback: (value: string | number) => metricFormatterMap[metric](Number(value)),
+        },
+        title: {
+          display: true,
+          text: metricLabelMap[metric],
         },
       },
     },

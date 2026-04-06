@@ -35,7 +35,11 @@ export const generateSeedEmissions = (): EmissionRecord[] => {
       const waste = roundValue(totalEstimate * 0.1);
       const industry = roundValue(totalEstimate * 0.11);
       const agriculture = roundValue(totalEstimate * 0.08);
-      const values = calculateTotals({ transport, buildings, power, waste, industry, agriculture });
+      const gdpBase = 55_000 + seed * 40;
+      const gdp = roundValue(gdpBase * (1 + elapsed * 0.018));
+      const populationBase = 900_000 + seed * 25;
+      const population = roundValue(populationBase * (1 + elapsed * 0.01));
+      const values = calculateTotals({ transport, buildings, power, waste, industry, agriculture, gdp, population });
 
       records.push({
         regionId: region.id,

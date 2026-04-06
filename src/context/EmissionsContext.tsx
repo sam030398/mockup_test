@@ -20,6 +20,16 @@ const STORAGE_KEY = "ny-ghg-emissions";
 const EmissionsContext = createContext<EmissionsContextType | undefined>(undefined);
 
 const normalizeRecord = (record: EmissionRecord): EmissionRecord => {
+  const normalizedTotal =
+    (record.transport ?? 0) +
+    (record.buildings ?? 0) +
+    (record.power ?? 0) +
+    (record.waste ?? 0) +
+    (record.industry ?? 0) +
+    (record.agriculture ?? 0);
+  const fallbackGdp = Math.max(1, Math.round(normalizedTotal / 120));
+  const fallbackPopulation = Math.max(1, Math.round(normalizedTotal / 6));
+
   const normalized: EmissionRecord = {
     ...record,
     transport: record.transport ?? 0,
@@ -28,13 +38,9 @@ const normalizeRecord = (record: EmissionRecord): EmissionRecord => {
     waste: record.waste ?? 0,
     industry: record.industry ?? 0,
     agriculture: record.agriculture ?? 0,
-    total:
-      (record.transport ?? 0) +
-      (record.buildings ?? 0) +
-      (record.power ?? 0) +
-      (record.waste ?? 0) +
-      (record.industry ?? 0) +
-      (record.agriculture ?? 0),
+    gdp: record.gdp && record.gdp > 0 ? record.gdp : fallbackGdp,
+    population: record.population && record.population > 0 ? record.population : fallbackPopulation,
+    total: normalizedTotal,
   };
 
   return normalized;
@@ -94,6 +100,8 @@ export function EmissionsProvider({ children }: { children: React.ReactNode }) {
       waste: values.waste,
       industry: values.industry,
       agriculture: values.agriculture,
+      gdp: values.gdp,
+      population: values.population,
       total: values.transport + values.buildings + values.power + values.waste + values.industry + values.agriculture,
       updatedAt: new Date().toISOString(),
       updatedBy,

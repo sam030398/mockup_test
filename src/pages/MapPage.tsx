@@ -22,14 +22,22 @@ export function MapPage() {
   );
 
   const statewideTrend = useMemo<EmissionRecord[]>(() => {
-    const totalsByYearAndType = records.reduce<Record<string, number>>((acc, record) => {
+    const totalsByYearAndType = records.reduce<Record<string, { total: number; gdp: number; population: number }>>(
+      (acc, record) => {
       const key = `${record.year}-${record.type}`;
-      acc[key] = (acc[key] ?? 0) + record.total;
+      const current = acc[key] ?? { total: 0, gdp: 0, population: 0 };
+      acc[key] = {
+        total: current.total + record.total,
+        gdp: current.gdp + record.gdp,
+        population: current.population + record.population,
+      };
       return acc;
-    }, {});
+      },
+      {},
+    );
 
     return Object.entries(totalsByYearAndType)
-      .map(([compositeKey, total]) => {
+      .map(([compositeKey, values]) => {
         const [yearValue, typeValue] = compositeKey.split("-");
         const numericYear = Number(yearValue);
         return {
@@ -42,7 +50,9 @@ export function MapPage() {
           waste: 0,
           industry: 0,
           agriculture: 0,
-          total,
+          gdp: values.gdp,
+          population: values.population,
+          total: values.total,
           updatedAt: "",
           updatedBy: "aggregate",
         };
@@ -91,6 +101,20 @@ export function MapPage() {
         <h3>Overall Selangor Trend (Actual vs Forecast, 2005-2030)</h3>
         <div className="chart-body chart-body-line">
           <TrendLineChart records={statewideTrend} />
+        </div>
+      </section>
+
+      <section className="card chart-card compact-line-card">
+        <h3>Overall Selangor Emission per GDP (Actual vs Forecast, 2005-2030)</h3>
+        <div className="chart-body chart-body-line">
+          <TrendLineChart records={statewideTrend} metric="emission_per_gdp" />
+        </div>
+      </section>
+
+      <section className="card chart-card compact-line-card">
+        <h3>Overall Selangor Emission per Population (Actual vs Forecast, 2005-2030)</h3>
+        <div className="chart-body chart-body-line">
+          <TrendLineChart records={statewideTrend} metric="emission_per_population" />
         </div>
       </section>
     </div>

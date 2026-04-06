@@ -239,6 +239,13 @@ select {
   font-size: 1.35rem;
 }
 
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.7rem;
+  margin-top: 0.8rem;
+}
+
 .chart-card {
   min-height: 280px;
 }

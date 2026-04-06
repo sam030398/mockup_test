@@ -33,9 +33,14 @@ export type EmissionRecord = {
   year: number;
   type: EmissionType;
 } & EmissionSectors & {
+  gdp: number;
+  population: number;
   total: number;
   updatedBy: string;
   updatedAt: string;
 };
 
-export type EmissionInput = EmissionSectors;
+export type EmissionInput = EmissionSectors & {
+  gdp: number;
+  population: number;
+};
