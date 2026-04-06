@@ -7,7 +7,7 @@ Build a role-based New York State GHG visualization platform with:
 - Login and role-based access (`Super Admin`, `Data Owner`)
 - NY regional council map (REDC regions)
 - Council-level emissions dashboard (year filter + pie + trend)
-- Data entry for future actuals (`2026-2030`)
+- Data entry for future actuals (`2026-2050`)
 - Actual vs Forecast comparison without overwriting forecast baseline
 
 ---
@@ -53,7 +53,7 @@ Build a role-based New York State GHG visualization platform with:
 
 ## 3.4 Data Entry Page
 
-- Data entry is restricted to years `2026-2030` only
+- Data entry is restricted to years `2026-2050` only
 - Historical period (`<= 2025`) is not editable
 - Save action writes submitted values as `actual` for that year
 - Existing `forecast` values remain unchanged for comparison
@@ -159,7 +159,7 @@ Auto deploy steps:
 - [ ] Implement Lambda APIs for:
   - [ ] Get regions/year totals
   - [ ] Get region trend (actual + forecast)
-  - [ ] Upsert future actual (`2026-2030`)
+  - [ ] Upsert future actual (`2026-2050`)
 - [ ] Add API Gateway auth with Cognito JWT
 
 ## 9.2 One-Time Data Load

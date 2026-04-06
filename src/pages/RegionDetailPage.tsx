@@ -95,7 +95,7 @@ export function RegionDetailPage() {
       </section>
 
       <section className="card chart-card line-card">
-        <h3>Trend: Actual vs Forecast (2005-2030)</h3>
+        <h3>Trend: Actual vs Forecast (2005-2050)</h3>
         <div className="chart-body chart-body-line">
           <TrendLineChart records={regionSeries} />
         </div>

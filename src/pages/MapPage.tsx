@@ -98,21 +98,21 @@ export function MapPage() {
       </section>
 
       <section className="card chart-card compact-line-card">
-        <h3>Overall Selangor Trend (Actual vs Forecast, 2005-2030)</h3>
+        <h3>Overall Selangor Trend (Actual vs Forecast, 2005-2050)</h3>
         <div className="chart-body chart-body-line">
           <TrendLineChart records={statewideTrend} />
         </div>
       </section>
 
       <section className="card chart-card compact-line-card">
-        <h3>Overall Selangor Emission per GDP (Actual vs Forecast, 2005-2030)</h3>
+        <h3>Overall Selangor Emission per GDP (Actual vs Forecast, 2005-2050)</h3>
         <div className="chart-body chart-body-line">
           <TrendLineChart records={statewideTrend} metric="emission_per_gdp" />
         </div>
       </section>
 
       <section className="card chart-card compact-line-card">
-        <h3>Overall Selangor Emission per Population (Actual vs Forecast, 2005-2030)</h3>
+        <h3>Overall Selangor Emission per Population (Actual vs Forecast, 2005-2050)</h3>
         <div className="chart-body chart-body-line">
           <TrendLineChart records={statewideTrend} metric="emission_per_population" />
         </div>

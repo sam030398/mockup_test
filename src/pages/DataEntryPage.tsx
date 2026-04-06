@@ -25,7 +25,7 @@ export function DataEntryPage() {
   const rows = useMemo(
     () =>
       years
-        .filter((year) => year >= 2026 && year <= 2030)
+        .filter((year) => year >= 2026 && year <= 2050)
         .map((year) => {
         const existing = getRecord(selectedRegion, year);
         return {
@@ -86,7 +86,7 @@ export function DataEntryPage() {
       <div className="section-header">
         <div>
           <h2>Input Emissions by Sector</h2>
-          <p className="muted">Submit actual values for 2026-2030 in tCO2e (forecast baseline remains unchanged)</p>
+          <p className="muted">Submit actual values for 2026-2050 in tCO2e (forecast baseline remains unchanged)</p>
         </div>
         <label>
           Regional Council

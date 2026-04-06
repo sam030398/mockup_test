@@ -2,7 +2,7 @@ import type { EmissionInput, EmissionRecord } from "../types";
 import { NY_REDC_REGIONS } from "./regions";
 
 const START_YEAR = 2005;
-const END_YEAR = 2030;
+const END_YEAR = 2050;
 const ACTUAL_END_YEAR = 2025;
 
 const seedFromRegion = (regionId: string): number =>
